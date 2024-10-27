@@ -1,0 +1,16 @@
+{
+    "CharacterA": {
+        "Footwork": 7,
+        "Agility": 6,
+        "Skill": 4,
+        "Endurance": 8,
+        "Stamina": 70
+    },
+    "CharacterB": {
+        "Footwork": 5,
+        "Agility": 5,
+        "Skill": 5,
+        "Endurance": 5,
+        "Stamina": 100
+    }
+}
