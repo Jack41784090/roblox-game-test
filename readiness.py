@@ -37,7 +37,7 @@ def main():
     characters = load_characters('characters.json')
     turn = 0
     while True:
-        user_input = input('\nPress "Enter" to advance turn, enter character name for reaction, or "stamina [number] [character_name]" to modify stamina: ').strip()
+        user_input = input('\nPress "Enter" to advance turn, enter character name for reaction, "stamina [number] [character_name]" to modify stamina, or "posture [number] [character_name]" to set posture: ').strip()
         if user_input == '':
             turn += 1
             next_turn(characters)
@@ -67,6 +67,21 @@ def main():
                     print("\nInvalid stamina value. Please enter a valid number.")
             else:
                 print("\nInvalid input format. Please enter 'stamina [number] [character_name]'.")
+        elif user_input.lower().startswith('posture'):
+            parts = user_input.split()
+            if len(parts) >= 3:
+                try:
+                    posture_value = float(parts[1])
+                    character_name = ' '.join(parts[2:])
+                    if character_name in characters:
+                        characters[character_name]['Posture'] = posture_value
+                        print(f"\n{character_name}'s Posture set to {characters[character_name]['Posture']}")
+                    else:
+                        print(f"\nCharacter {character_name} not found.")
+                except ValueError:
+                    print("\nInvalid posture value. Please enter a valid number.")
+            else:
+                print("\nInvalid input format. Please enter 'posture [number] [character_name]'.")
         else:
             # Reaction
             if user_input in characters and characters[user_input]['Posture'] >= 75:
