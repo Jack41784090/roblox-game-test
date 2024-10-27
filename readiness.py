@@ -24,13 +24,14 @@ def load_characters(filename):
 
 def next_turn(characters):
     for stats in characters.values():
-        stats['Posture'] += stats['Increment']
+        stats['Posture'] = min(100, stats['Posture'] + stats['Increment'])  # Posture capped at 100
 
 def get_next_actor(characters):
     eligible_chars = {name: stats for name, stats in characters.items() if stats['Posture'] >= 75}
     if not eligible_chars:
         return None
     # Return the character with the highest posture
+    print(eligible_chars)
     return max(eligible_chars.items(), key=lambda x: x[1]['Posture'])[0]
 
 def main():
@@ -46,8 +47,12 @@ def main():
                 print(f"{name}'s Posture: {stats['Posture']:.2f}")
             next_actor = get_next_actor(characters)
             if next_actor:
-                print(f"\n{next_actor} can act now!")
-                characters[next_actor]['Posture'] = 0  # Reset posture after action
+                action = input(f"\n{next_actor} can act now! Type 'act' to act, 'wait' to accumulate posture: ").strip().lower()
+                if action == 'wait':
+                    print(f"{next_actor} waits and accumulates more posture.")
+                    # Posture will accumulate automatically on next turn without reset
+                else:
+                    characters[next_actor]['Posture'] = 0  # Default to act if no input
         elif user_input.lower().startswith('stamina'):
             parts = user_input.split()
             if len(parts) >= 3:
@@ -74,7 +79,7 @@ def main():
                     posture_value = float(parts[1])
                     character_name = ' '.join(parts[2:])
                     if character_name in characters:
-                        characters[character_name]['Posture'] = posture_value
+                        characters[character_name]['Posture'] = min(100, posture_value)  # Ensure posture does not exceed 100
                         print(f"\n{character_name}'s Posture set to {characters[character_name]['Posture']}")
                     else:
                         print(f"\nCharacter {character_name} not found.")
@@ -84,9 +89,8 @@ def main():
                 print("\nInvalid input format. Please enter 'posture [number] [character_name]'.")
         else:
             # Reaction
-            if user_input in characters and characters[user_input]['Posture'] >= 75:
-                print(f"\n{user_input} reacts and acts now!")
-                characters[user_input]['Posture'] = 0  # Reset posture after action
+            if user_input in characters and characters[user_input]['Posture'] > 75:
+                print(f"\n{user_input} chooses to react and will act next turn!")
             else:
                 print(f"\n{user_input} cannot act now.")
                 
