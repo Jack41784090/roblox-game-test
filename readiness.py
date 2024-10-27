@@ -37,7 +37,7 @@ def main():
     characters = load_characters('characters.json')
     turn = 0
     while True:
-        user_input = input('Press "Enter" to advance turn or enter character name for reaction: ').strip()
+        user_input = input('\nPress "Enter" to advance turn, enter character name for reaction, or "stamina [number] [character_name]" to modify stamina: ').strip()
         if user_input == '':
             turn += 1
             next_turn(characters)
@@ -48,6 +48,25 @@ def main():
             if next_actor:
                 print(f"\n{next_actor} can act now!")
                 characters[next_actor]['Posture'] = 0  # Reset posture after action
+        elif user_input.lower().startswith('stamina'):
+            parts = user_input.split()
+            if len(parts) >= 3:
+                try:
+                    stamina_change = float(parts[1])
+                    character_name = ' '.join(parts[2:])
+                    if character_name in characters:
+                        characters[character_name]['Stamina'] += stamina_change
+                        # Ensure stamina is between 0% and 100%
+                        characters[character_name]['Stamina'] = max(0, min(100, characters[character_name]['Stamina']))
+                        # Recalculate Posture Increment due to stamina change
+                        characters[character_name]['Increment'] = calculate_posture_increment(characters[character_name])
+                        print(f"\n{character_name}'s Stamina adjusted to {characters[character_name]['Stamina']}%")
+                    else:
+                        print(f"\nCharacter {character_name} not found.")
+                except ValueError:
+                    print("\nInvalid stamina value. Please enter a valid number.")
+            else:
+                print("\nInvalid input format. Please enter 'stamina [number] [character_name]'.")
         else:
             # Reaction
             if user_input in characters and characters[user_input]['Posture'] >= 75:
